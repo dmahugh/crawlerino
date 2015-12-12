@@ -16,4 +16,4 @@ c:\myfolder> pip install beautifulsoup4
 ```
 Then you can run crawlerino with the command ```python crawlerino```, and you'll see the output from the test case:
 
-/// insert screenshot
+![screenshot](images/testrun.png)
