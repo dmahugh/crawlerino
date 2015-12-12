@@ -8,7 +8,12 @@ The emphasis here is on simplicity, and tothat end here are some things that cra
 * It ignores robots.txt.
 
 ## Installation
-/// pip install the modules, that's it
+Since crawlerino is simply intended as a starting point for customization, it isn't packaged as a Python module. But there are only two dependencies so it's easy to install manually. You just need to install requests and Beautiful Soup; for example:
 
-## Example
-/// show the test case
+```
+c:\myfolder> pip install requests
+c:\myfolder> pip install beautifulsoup4
+```
+Then you can run crawlerino with the command ```python crawlerino```, and you'll see the output from the test case:
+
+/// insert screenshot
