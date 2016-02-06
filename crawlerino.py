@@ -4,11 +4,10 @@ Prerequisites:
 pip install requests
 pip install beautifulsoup4
 """
-import bs4
-import requests
-import re
 from collections import deque
 from urllib.parse import urldefrag, urljoin, urlparse
+import bs4
+import requests
 
 def crawler(startpage, maxpages=100, singledomain=True):
     """Crawl the web starting from specified page.
@@ -51,12 +50,12 @@ def crawler(startpage, maxpages=100, singledomain=True):
         # remove fragment identifiers
         links = [urldefrag(link)[0] for link in links]
         # remove any empty strings
-        links = list(filter(None,links))
+        links = list(filter(None, links))
         # if it's a relative link, change to absolute
-        links = [link if bool(urlparse(link).netloc) else urljoin(url,link) for link in links]
+        links = [link if bool(urlparse(link).netloc) else urljoin(url, link) for link in links]
         # if singledomain=True, remove links to other domains
         if singledomain:
-            links = [link for link in links if (urlparse(link).netloc == domain)]
+            links = [link for link in links if urlparse(link).netloc == domain]
 
         # add these links to the queue (except if already crawled)
         for link in links:
