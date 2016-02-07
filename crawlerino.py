@@ -9,6 +9,7 @@ from urllib.parse import urldefrag, urljoin, urlparse
 import bs4
 import requests
 
+#------------------------------------------------------------------------------
 def crawler(startpage, maxpages=100, singledomain=True):
     """Crawl the web starting from specified page.
 
@@ -20,7 +21,7 @@ def crawler(startpage, maxpages=100, singledomain=True):
     pagequeue = deque() # queue of pages to be crawled
     pagequeue.append(startpage)
     crawled = [] # list of pages already crawled
-    domain = urlparse(startpage).netloc # for singledomain option
+    domain = urlparse(startpage).netloc if singledomain else None
 
     pages = 0 # number of pages succesfully crawled so far
     failed = 0 # number of pages that couldn't be crawled
@@ -30,32 +31,19 @@ def crawler(startpage, maxpages=100, singledomain=True):
 
         try:
             response = requests.get(url)
-        except:
+        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema):
             print("*FAILED*:", url)
             failed += 1
+            continue
 
         if not response.headers['content-type'].startswith('text/html'):
             continue # don't crawl non-HTML links
 
-        soup = bs4.BeautifulSoup(response.text, "html.parser")
-        print('Crawling:', url)
         pages += 1
         crawled.append(url)
+        pagehandler(url, response) # process this page as desired
 
-        # PROCESSING CODE GOES HERE:
-        # do something interesting with this page
-
-        # get target URLs for all links on the page
-        links = [a.attrs.get('href') for a in soup.select('a[href]')]
-        # remove fragment identifiers
-        links = [urldefrag(link)[0] for link in links]
-        # remove any empty strings
-        links = list(filter(None, links))
-        # if it's a relative link, change to absolute
-        links = [link if bool(urlparse(link).netloc) else urljoin(url, link) for link in links]
-        # if singledomain=True, remove links to other domains
-        if singledomain:
-            links = [link for link in links if urlparse(link).netloc == domain]
+        links = getlinks(url, response, domain) # get links to be crawled
 
         # add these links to the queue (except if already crawled)
         for link in links:
@@ -64,7 +52,44 @@ def crawler(startpage, maxpages=100, singledomain=True):
 
     print('{0} pages crawled, {1} pages failed to load.'.format(pages, failed))
 
+#------------------------------------------------------------------------------
+def getlinks(pageurl, pageresponse, domain):
+    """Returns a list of links from from this page to be crawled.
 
+    pageurl = URL of this page
+    pageresponse = page content; response object from requests module
+    domain = domain being crawled (None to return links to *any* domain)
+    """
+    soup = bs4.BeautifulSoup(pageresponse.text, "html.parser")
+
+    # get target URLs for all links on the page
+    links = [a.attrs.get('href') for a in soup.select('a[href]')]
+
+    # remove fragment identifiers
+    links = [urldefrag(link)[0] for link in links]
+
+    # remove any empty strings
+    links = list(filter(None, links))
+
+    # if it's a relative link, change to absolute
+    links = [link if bool(urlparse(link).netloc) else urljoin(pageurl, link) for link in links]
+
+    # if only crawing a single domain, remove links to other domains
+    if domain:
+        links = [link for link in links if urlparse(link).netloc == domain]
+
+    return links
+
+#------------------------------------------------------------------------------
+def pagehandler(pageurl, pageresponse):
+    """Function to be customized for processing of a single page.
+
+    pageurl = URL of this page
+    pageresponse = page content; response object from requests module
+    """
+    print('Crawling:', pageurl)
+
+#------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
 if __name__ == "__main__":
-    crawler('http://www.microsoft.com', maxpages=30, singledomain=True)
+    crawler('http://www.microsoft.com', maxpages=20, singledomain=True)
