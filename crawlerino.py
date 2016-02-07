@@ -29,23 +29,23 @@ def crawler(startpage, maxpages=100, singledomain=True):
     while pages < maxpages and pagequeue:
         url = pagequeue.popleft() # get next page to crawl (FIFO queue)
 
+        # read the page
         try:
             response = requests.get(url)
         except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema):
             print("*FAILED*:", url)
             failed += 1
             continue
-
         if not response.headers['content-type'].startswith('text/html'):
-            continue # don't crawl non-HTML links
+            continue # don't crawl non-HTML content
 
-        pages += 1
+        # process the page
+        pagehandler(url, response)
         crawled.append(url)
-        pagehandler(url, response) # process this page as desired
+        pages += 1
 
-        links = getlinks(url, response, domain) # get links to be crawled
-
-        # add these links to the queue (except if already crawled)
+        # get the links from this page and add them to the crawler queue
+        links = getlinks(url, response, domain)
         for link in links:
             if link not in crawled and link not in pagequeue:
                 pagequeue.append(link)
