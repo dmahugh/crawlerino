@@ -13,7 +13,7 @@ import requests
 def crawler(startpage, maxpages=100, singledomain=True):
     """Crawl the web starting from specified page.
 
-    1st parameter = starting page url
+    1st parameter = URL of starting page
     maxpages = maximum number of pages to crawl
     singledomain = whether to only crawl links within startpage's domain
     """
@@ -24,7 +24,7 @@ def crawler(startpage, maxpages=100, singledomain=True):
     domain = urlparse(startpage).netloc if singledomain else None
 
     pages = 0 # number of pages succesfully crawled so far
-    failed = 0 # number of pages that couldn't be crawled
+    failed = 0 # number of links that couldn't be crawled
 
     while pages < maxpages and pagequeue:
         url = pagequeue.popleft() # get next page to crawl (FIFO queue)
@@ -41,15 +41,14 @@ def crawler(startpage, maxpages=100, singledomain=True):
             continue # don't crawl non-HTML content
 
         # process the page
-        pagehandler(url, response)
         crawled.append(url)
         pages += 1
-
-        # get the links from this page and add them to the crawler queue
-        links = getlinks(url, response, domain)
-        for link in links:
-            if link not in crawled and link not in pagequeue:
-                pagequeue.append(link)
+        if pagehandler(url, response):
+            # get the links from this page and add them to the crawler queue
+            links = getlinks(url, response, domain)
+            for link in links:
+                if link not in crawled and link not in pagequeue:
+                    pagequeue.append(link)
 
     print('{0} pages crawled, {1} links failed.'.format(pages, failed))
 
@@ -88,8 +87,11 @@ def pagehandler(pageurl, pageresponse):
 
     pageurl = URL of this page
     pageresponse = page content; response object from requests module
+
+    Return value = whether or not this page's links should be crawled.
     """
     print('Crawling:', pageurl)
+    return True
 
 #------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
