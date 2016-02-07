@@ -32,7 +32,8 @@ def crawler(startpage, maxpages=100, singledomain=True):
         # read the page
         try:
             response = requests.get(url)
-        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema):
+        except (requests.exceptions.MissingSchema,
+                requests.exceptions.InvalidSchema):
             print("*FAILED*:", url)
             failed += 1
             continue
@@ -50,7 +51,7 @@ def crawler(startpage, maxpages=100, singledomain=True):
             if link not in crawled and link not in pagequeue:
                 pagequeue.append(link)
 
-    print('{0} pages crawled, {1} pages failed to load.'.format(pages, failed))
+    print('{0} pages crawled, {1} links failed.'.format(pages, failed))
 
 #------------------------------------------------------------------------------
 def getlinks(pageurl, pageresponse, domain):
@@ -72,7 +73,8 @@ def getlinks(pageurl, pageresponse, domain):
     links = list(filter(None, links))
 
     # if it's a relative link, change to absolute
-    links = [link if bool(urlparse(link).netloc) else urljoin(pageurl, link) for link in links]
+    links = [link if bool(urlparse(link).netloc) else urljoin(pageurl, link) \
+        for link in links]
 
     # if only crawing a single domain, remove links to other domains
     if domain:
