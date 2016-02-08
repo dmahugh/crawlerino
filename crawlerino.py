@@ -69,7 +69,7 @@ def getlinks(pageurl, pageresponse, domain):
     links = [urldefrag(link)[0] for link in links]
 
     # remove any empty strings
-    links = list(filter(None, links))
+    links = [link for link in links if link]
 
     # if it's a relative link, change to absolute
     links = [link if bool(urlparse(link).netloc) else urljoin(pageurl, link) \
