@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module crawlerino</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>crawlerino</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cdmahugh%5Cdropbox%5Cpython%5Ccrawlerino%5Ccrawlerino.py">c:\users\dmahugh\dropbox\python\crawlerino\crawlerino.py</a></font></td></tr></table>
+    <p><tt>Simple&nbsp;Python&nbsp;3&nbsp;web&nbsp;crawler,&nbsp;to&nbsp;be&nbsp;extended&nbsp;for&nbsp;various&nbsp;uses.<br>
+&nbsp;<br>
+Prerequisites:<br>
+pip&nbsp;install&nbsp;requests<br>
+pip&nbsp;install&nbsp;beautifulsoup4</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="bs4.html">bs4</a><br>
+</td><td width="25%" valign=top><a href="requests.html">requests</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-crawler"><strong>crawler</strong></a>(startpage, maxpages=100, singledomain=True)</dt><dd><tt>Crawl&nbsp;the&nbsp;web&nbsp;starting&nbsp;from&nbsp;specified&nbsp;page.<br>
+&nbsp;<br>
+1st&nbsp;parameter&nbsp;=&nbsp;URL&nbsp;of&nbsp;starting&nbsp;page<br>
+maxpages&nbsp;=&nbsp;maximum&nbsp;number&nbsp;of&nbsp;pages&nbsp;to&nbsp;crawl<br>
+singledomain&nbsp;=&nbsp;whether&nbsp;to&nbsp;only&nbsp;crawl&nbsp;links&nbsp;within&nbsp;startpage's&nbsp;domain</tt></dd></dl>
+ <dl><dt><a name="-getlinks"><strong>getlinks</strong></a>(pageurl, pageresponse, domain)</dt><dd><tt>Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;links&nbsp;from&nbsp;from&nbsp;this&nbsp;page&nbsp;to&nbsp;be&nbsp;crawled.<br>
+&nbsp;<br>
+pageurl&nbsp;=&nbsp;URL&nbsp;of&nbsp;this&nbsp;page<br>
+pageresponse&nbsp;=&nbsp;page&nbsp;content;&nbsp;response&nbsp;object&nbsp;from&nbsp;requests&nbsp;module<br>
+domain&nbsp;=&nbsp;domain&nbsp;being&nbsp;crawled&nbsp;(None&nbsp;to&nbsp;return&nbsp;links&nbsp;to&nbsp;*any*&nbsp;domain)</tt></dd></dl>
+ <dl><dt><a name="-pagehandler"><strong>pagehandler</strong></a>(pageurl, pageresponse)</dt><dd><tt>Function&nbsp;to&nbsp;be&nbsp;customized&nbsp;for&nbsp;processing&nbsp;of&nbsp;a&nbsp;single&nbsp;page.<br>
+&nbsp;<br>
+pageurl&nbsp;=&nbsp;URL&nbsp;of&nbsp;this&nbsp;page<br>
+pageresponse&nbsp;=&nbsp;page&nbsp;content;&nbsp;response&nbsp;object&nbsp;from&nbsp;requests&nbsp;module<br>
+&nbsp;<br>
+Return&nbsp;value&nbsp;=&nbsp;whether&nbsp;or&nbsp;not&nbsp;this&nbsp;page's&nbsp;links&nbsp;should&nbsp;be&nbsp;crawled.</tt></dd></dl>
+</td></tr></table>
+</body></html>
