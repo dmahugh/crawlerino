@@ -26,12 +26,13 @@ def crawler(startpage, maxpages=100, singledomain=True):
     pages = 0 # number of pages succesfully crawled so far
     failed = 0 # number of links that couldn't be crawled
 
+    sess = requests.session() # initialize the session
     while pages < maxpages and pagequeue:
         url = pagequeue.popleft() # get next page to crawl (FIFO queue)
 
         # read the page
         try:
-            response = requests.get(url)
+            response = sess.get(url)
         except (requests.exceptions.MissingSchema,
                 requests.exceptions.InvalidSchema):
             print("*FAILED*:", url)
