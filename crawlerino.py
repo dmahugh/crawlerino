@@ -96,4 +96,8 @@ def pagehandler(pageurl, pageresponse):
 #------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
 if __name__ == "__main__":
-    crawler('http://www.microsoft.com', maxpages=20, singledomain=True)
+    from timeit import default_timer
+    START = default_timer()
+    crawler('http://www.microsoft.com', maxpages=10, singledomain=True)
+    END = default_timer()
+    print('Elapsed time (seconds) = ' + str(END-START))
