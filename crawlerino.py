@@ -5,6 +5,7 @@ pip install requests
 pip install beautifulsoup4
 """
 from collections import deque
+from timeit import default_timer
 from urllib.parse import urldefrag, urljoin, urlparse
 import bs4
 import requests
@@ -91,13 +92,12 @@ def pagehandler(pageurl, pageresponse):
 
     Return value = whether or not this page's links should be crawled.
     """
-    print('Crawling:', pageurl)
+    print('Crawling:' + pageurl + ' ({0} bytes)'.format(len(pageresponse.text)))
     return True
 
 #------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
 if __name__ == "__main__":
-    from timeit import default_timer
     START = default_timer()
     crawler('http://www.microsoft.com', maxpages=10, singledomain=True)
     END = default_timer()
