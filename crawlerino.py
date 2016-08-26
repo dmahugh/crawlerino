@@ -179,8 +179,7 @@ def wordcount(pageresponse):
     rawtext = bs4.BeautifulSoup(pageresponse.text, "html.parser").get_text()
     words = getwords(rawtext)
     counts, wordsused = getcounts(words)
-    for word, count in counts.most_common(10):
-        print(word, count)
+    print(counts.most_common(5))
 
 #------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
