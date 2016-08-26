@@ -76,7 +76,7 @@ def getcounts(words=None):
         ['after', 'all', 'and', 'are', 'because', 'been', 'but', 'for', 'from',
          'has', 'have', 'her', 'more', 'not', 'now', 'our', 'than', 'that',
          'the', 'these', 'they', 'their', 'this', 'was', 'were', 'when', 'who',
-         'will', 'with', 'year', 'hpv19slimfeature']
+         'will', 'with', 'year', 'hpv19slimfeature', 'div']
     for word in ignore:
         counts.pop(word, None)
 
@@ -122,12 +122,12 @@ def getwords(rawtext):
     """Return a list of the words in a text string.
     """
     words = []
-    cruft = ',./():;!"' + "'â{}"
+    cruft = ',./():;!"' + "<>'â{}" # characters to strip off ends of words
     for raw_word in rawtext.split():
         # remove whitespace before/after the word
         word = raw_word.strip(string.whitespace + cruft + '-').lower()
 
-        # remove posessive 's at end of word ...
+        # remove posessive 's at end of word
         if word[-2:] == "'s":
             word = word[:-2]
 
@@ -180,12 +180,15 @@ def wordcount(pageresponse):
     rawtext = bs4.BeautifulSoup(pageresponse.text, "html.parser").get_text()
     words = getwords(rawtext)
     counts, wordsused = getcounts(words)
-    print(counts.most_common(10))
+    if counts.most_common(1)[0][1] < 10:
+        print('This page does not have any heavily used words.')
+    else:
+        print(counts.most_common(10))
 
 #------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
 if __name__ == "__main__":
     START = default_timer()
-    crawler('http://www.microsoft.com', maxpages=3, singledomain=True)
+    crawler('http://www.microsoft.com', maxpages=10, singledomain=True)
     END = default_timer()
     print('Elapsed time (seconds) = ' + str(END-START))
