@@ -115,7 +115,7 @@ def getlinks(pageurl, domain, soup):
 
     # if only crawing a single domain, remove links to other domains
     if domain:
-        links = [link for link in links if urlparse(link).netloc == domain]
+        links = [link for link in links if samedomain(urlparse(link).netloc, domain)]
 
     return links
 
@@ -162,6 +162,27 @@ def noalpha(word):
     return True
 
 #------------------------------------------------------------------------------
+def samedomain(netloc1, netloc2):
+    """Determine whether two netloc values are the same domain.
+
+    This function handles the 'www.' prefix on domain names and does a
+    "www-insensitive" comparions. In other words ...
+
+    samedomain('www.microsoft.com', 'microsoft.com') == True
+    samedomain('google.com', 'www.google.com') == True
+    samedomain('facebook.com', 'facebook.com') == True
+    """
+    nowww1 = netloc1.lower()
+    if nowww1.startswith('www.'):
+        nowww1 = nowww1[4:]
+
+    nowww2 = netloc2.lower()
+    if nowww2.startswith('www.'):
+        nowww2 = nowww2[4:]
+
+    return nowww1 == nowww2
+
+#------------------------------------------------------------------------------
 def url_in_list(url, listobj):
     """Determine whether a URL is in a list of URLs.
 
@@ -195,6 +216,6 @@ def wordcount(pageresponse, soup):
 # if running standalone, crawl some Microsoft pages as a test
 if __name__ == "__main__":
     START = default_timer()
-    crawler('http://www.microsoft.com', maxpages=10, singledomain=True)
+    crawler('http://www.mahugh.com', maxpages=10, singledomain=True)
     END = default_timer()
     print('Elapsed time (seconds) = ' + str(END-START))
