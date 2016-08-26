@@ -76,7 +76,7 @@ def getcounts(words=None):
         ['after', 'all', 'and', 'are', 'because', 'been', 'but', 'for', 'from',
          'has', 'have', 'her', 'more', 'not', 'now', 'our', 'than', 'that',
          'the', 'these', 'they', 'their', 'this', 'was', 'were', 'when', 'who',
-         'will', 'with', 'year']
+         'will', 'with', 'year', 'hpv19slimfeature']
     for word in ignore:
         counts.pop(word, None)
 
@@ -122,9 +122,10 @@ def getwords(rawtext):
     """Return a list of the words in a text string.
     """
     words = []
+    cruft = ',./():;!"' + "'â{}"
     for raw_word in rawtext.split():
         # remove whitespace before/after the word
-        word = raw_word.strip(string.whitespace + ',./-():;!"' + "'â").lower()
+        word = raw_word.strip(string.whitespace + cruft + '-').lower()
 
         # remove posessive 's at end of word ...
         if word[-2:] == "'s":
@@ -179,7 +180,7 @@ def wordcount(pageresponse):
     rawtext = bs4.BeautifulSoup(pageresponse.text, "html.parser").get_text()
     words = getwords(rawtext)
     counts, wordsused = getcounts(words)
-    print(counts.most_common(5))
+    print(counts.most_common(10))
 
 #------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
