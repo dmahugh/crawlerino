@@ -54,7 +54,7 @@ def crawler(startpage, maxpages=100, singledomain=True):
         pages += 1
         if pagehandler(url, response, soup):
             # get the links from this page and add them to the crawler queue
-            links = getlinks(url, response, domain, soup)
+            links = getlinks(url, domain, soup)
             for link in links:
                 if not url_in_list(link, crawled) and not url_in_list(link, pagequeue):
                     pagequeue.append(link)
@@ -92,13 +92,12 @@ def getcounts(words=None):
     return (counts, wordsused)
 
 #------------------------------------------------------------------------------
-def getlinks(pageurl, pageresponse, domain, soup):
+def getlinks(pageurl, domain, soup):
     """Returns a list of links from from this page to be crawled.
 
     pageurl = URL of this page
-    pageresponse = page content; response object from requests module
     domain = domain being crawled (None to return links to *any* domain)
-    soup = BeautifulSoup object created from pageresponse
+    soup = BeautifulSoup object for this page
     """
 
     # get target URLs for all links on the page
@@ -184,11 +183,11 @@ def wordcount(pageresponse, soup):
     This is an example of a page handler. Just creates a list of unique words on
     the page and displays the word counts.
     """
-    rawtext = bs4.BeautifulSoup(pageresponse.text, "html.parser").get_text()
+    rawtext = soup.get_text()
     words = getwords(rawtext)
-    counts, wordsused = getcounts(words)
+    counts, _ = getcounts(words)
     if counts.most_common(1)[0][1] < 10:
-        print('This page does not have any heavily used words.')
+        print('This page does not have any words used more than 10 times.')
     else:
         print(counts.most_common(10))
 
