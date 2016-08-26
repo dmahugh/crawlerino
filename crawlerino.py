@@ -80,6 +80,12 @@ def getcounts(words=None):
     for word in ignore:
         counts.pop(word, None)
 
+    # remove words that contain no alpha letters
+    tempcopy = [_ for _ in words]
+    for word in tempcopy:
+        if noalpha(word):
+            counts.pop(word, None)
+
     return (counts, wordsused)
 
 #------------------------------------------------------------------------------
@@ -140,6 +146,15 @@ def pagehandler(pageurl, pageresponse):
     """
     print('Crawling:' + pageurl + ' ({0} bytes)'.format(len(pageresponse.text)))
     wordcount(pageresponse) # display unique word counts
+    return True
+
+#------------------------------------------------------------------------------
+def noalpha(word):
+    """Determine whether a word contains no alpha characters.
+    """
+    for char in word:
+        if char.isalpha():
+            return False
     return True
 
 #------------------------------------------------------------------------------
