@@ -5,8 +5,11 @@ pip install requests
 pip install beautifulsoup4
 """
 import collections
+import string
+
 from timeit import default_timer
 from urllib.parse import urldefrag, urljoin, urlparse
+
 import bs4
 import requests
 
@@ -84,6 +87,24 @@ def getlinks(pageurl, pageresponse, domain):
 
     return links
 
+#-------------------------------------------------------------------------------
+def getwords(rawtext):
+    """Return a list of the words in a text string.
+    """
+    words = []
+    for raw_word in rawtext.split():
+        # remove whitespace before/after the word
+        word = raw_word.strip(string.whitespace + ',./-():;!"' + "'â").lower()
+
+        # remove posessive 's at end of word ...
+        if word[-2:] == "'s":
+            word = word[:-2]
+
+        if word: # if there's anything left, add it to the words list
+            words.append(word)
+
+    return words
+
 #------------------------------------------------------------------------------
 def pagehandler(pageurl, pageresponse):
     """Function to be customized for processing of a single page.
@@ -117,7 +138,7 @@ def wordcount(pageresponse):
     the page and displays the word counts.
     """
     rawtext = bs4.BeautifulSoup(pageresponse.text, "html.parser").get_text()
-    words = rawtext.split()
+    words = getwords(rawtext)
     counts = collections.Counter(words)
     for word, count in counts.most_common(10):
         print(word, count)
