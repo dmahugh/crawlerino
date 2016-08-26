@@ -49,7 +49,8 @@ def crawler(startpage, maxpages=100, singledomain=True):
             # get the links from this page and add them to the crawler queue
             links = getlinks(url, response, domain)
             for link in links:
-                if link not in crawled and link not in pagequeue:
+                #///if link not in crawled and link not in pagequeue:
+                if not url_in_list(link, crawled) and not url_in_list(link, pagequeue):
                     pagequeue.append(link)
 
     print('{0} pages crawled, {1} links failed.'.format(pages, failed))
@@ -96,9 +97,21 @@ def pagehandler(pageurl, pageresponse):
     return True
 
 #------------------------------------------------------------------------------
+def url_in_list(url, listobj):
+    """Determine whether a URL is in a list of URLs.
+
+    This function checks whether the URL is contained in the list with either
+    an http:// or https:// prefix. It is used to avoid crawling the same
+    page separately as http and https.
+    """
+    http_version = url.replace('https://', 'http://')
+    https_version = url.replace('http://', 'https://')
+    return (http_version in listobj) or (https_version in listobj)
+
+#------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
 if __name__ == "__main__":
     START = default_timer()
-    crawler('http://www.microsoft.com', maxpages=10, singledomain=True)
+    crawler('http://www.microsoft.com', maxpages=3, singledomain=True)
     END = default_timer()
     print('Elapsed time (seconds) = ' + str(END-START))
