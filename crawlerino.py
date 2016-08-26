@@ -45,14 +45,17 @@ def crawler(startpage, maxpages=100, singledomain=True):
         if not response.headers['content-type'].startswith('text/html'):
             continue # don't crawl non-HTML content
 
+        # Note that we create the Beautiful Soup object here (once) and pass it
+        # to the other functions that need to use it
+        soup = bs4.BeautifulSoup(response.text, "html.parser")
+
         # process the page
         crawled.append(url)
         pages += 1
-        if pagehandler(url, response):
+        if pagehandler(url, response, soup):
             # get the links from this page and add them to the crawler queue
-            links = getlinks(url, response, domain)
+            links = getlinks(url, response, domain, soup)
             for link in links:
-                #///if link not in crawled and link not in pagequeue:
                 if not url_in_list(link, crawled) and not url_in_list(link, pagequeue):
                     pagequeue.append(link)
 
@@ -89,14 +92,14 @@ def getcounts(words=None):
     return (counts, wordsused)
 
 #------------------------------------------------------------------------------
-def getlinks(pageurl, pageresponse, domain):
+def getlinks(pageurl, pageresponse, domain, soup):
     """Returns a list of links from from this page to be crawled.
 
     pageurl = URL of this page
     pageresponse = page content; response object from requests module
     domain = domain being crawled (None to return links to *any* domain)
+    soup = BeautifulSoup object created from pageresponse
     """
-    soup = bs4.BeautifulSoup(pageresponse.text, "html.parser")
 
     # get target URLs for all links on the page
     links = [a.attrs.get('href') for a in soup.select('a[href]')]
@@ -137,16 +140,17 @@ def getwords(rawtext):
     return words
 
 #------------------------------------------------------------------------------
-def pagehandler(pageurl, pageresponse):
+def pagehandler(pageurl, pageresponse, soup):
     """Function to be customized for processing of a single page.
 
     pageurl = URL of this page
     pageresponse = page content; response object from requests module
+    soup = Beautiful Soup object created from pageresponse
 
     Return value = whether or not this page's links should be crawled.
     """
     print('Crawling:' + pageurl + ' ({0} bytes)'.format(len(pageresponse.text)))
-    wordcount(pageresponse) # display unique word counts
+    wordcount(pageresponse, soup) # display unique word counts
     return True
 
 #------------------------------------------------------------------------------
@@ -171,8 +175,11 @@ def url_in_list(url, listobj):
     return (http_version in listobj) or (https_version in listobj)
 
 #------------------------------------------------------------------------------
-def wordcount(pageresponse):
+def wordcount(pageresponse, soup):
     """Display word counts for a crawled page.
+
+    pageresponse = page content; response object from requests module
+    soup = Beautiful Soup object created from pageresponse
 
     This is an example of a page handler. Just creates a list of unique words on
     the page and displays the word counts.
