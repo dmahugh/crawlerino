@@ -165,22 +165,21 @@ def noalpha(word):
 def samedomain(netloc1, netloc2):
     """Determine whether two netloc values are the same domain.
 
-    This function handles the 'www.' prefix on domain names and does a
-    "www-insensitive" comparions. In other words ...
+    This function does a "subdomain-insensitive" comparison. In other words ...
 
     samedomain('www.microsoft.com', 'microsoft.com') == True
     samedomain('google.com', 'www.google.com') == True
-    samedomain('facebook.com', 'facebook.com') == True
+    samedomain('api.github.com', 'www.github.com') == True
     """
-    nowww1 = netloc1.lower()
-    if nowww1.startswith('www.'):
-        nowww1 = nowww1[4:]
+    domain1 = netloc1.lower()
+    if '.' in domain1:
+        domain1 = domain1.split('.')[-2] + '.' + domain1.split('.')[-1]
 
-    nowww2 = netloc2.lower()
-    if nowww2.startswith('www.'):
-        nowww2 = nowww2[4:]
+    domain2 = netloc2.lower()
+    if '.' in domain2:
+        domain2 = domain2.split('.')[-2] + '.' + domain2.split('.')[-1]
 
-    return nowww1 == nowww2
+    return domain1 == domain2
 
 #------------------------------------------------------------------------------
 def url_in_list(url, listobj):
