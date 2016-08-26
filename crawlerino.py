@@ -4,7 +4,7 @@ Prerequisites:
 pip install requests
 pip install beautifulsoup4
 """
-from collections import deque
+import collections
 from timeit import default_timer
 from urllib.parse import urldefrag, urljoin, urlparse
 import bs4
@@ -19,7 +19,7 @@ def crawler(startpage, maxpages=100, singledomain=True):
     singledomain = whether to only crawl links within startpage's domain
     """
 
-    pagequeue = deque() # queue of pages to be crawled
+    pagequeue = collections.deque() # queue of pages to be crawled
     pagequeue.append(startpage)
     crawled = [] # list of pages already crawled
     domain = urlparse(startpage).netloc if singledomain else None
@@ -94,6 +94,7 @@ def pagehandler(pageurl, pageresponse):
     Return value = whether or not this page's links should be crawled.
     """
     print('Crawling:' + pageurl + ' ({0} bytes)'.format(len(pageresponse.text)))
+    wordcount(pageresponse) # display unique word counts
     return True
 
 #------------------------------------------------------------------------------
@@ -107,6 +108,19 @@ def url_in_list(url, listobj):
     http_version = url.replace('https://', 'http://')
     https_version = url.replace('http://', 'https://')
     return (http_version in listobj) or (https_version in listobj)
+
+#------------------------------------------------------------------------------
+def wordcount(pageresponse):
+    """Display word counts for a crawled page.
+
+    This is an example of a page handler. Just creates a list of unique words on
+    the page and displays the word counts.
+    """
+    rawtext = bs4.BeautifulSoup(pageresponse.text, "html.parser").get_text()
+    words = rawtext.split()
+    counts = collections.Counter(words)
+    for word, count in counts.most_common(10):
+        print(word, count)
 
 #------------------------------------------------------------------------------
 # if running standalone, crawl some Microsoft pages as a test
