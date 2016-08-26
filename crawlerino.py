@@ -58,6 +58,33 @@ def crawler(startpage, maxpages=100, singledomain=True):
 
     print('{0} pages crawled, {1} links failed.'.format(pages, failed))
 
+#-------------------------------------------------------------------------------
+def getcounts(words=None):
+    """Convert a list of words into a dictionary of word/count pairs.
+    Does not include words not deemed interesting.
+    """
+
+    # create a dictionary of key=word, value=count
+    counts = collections.Counter(words)
+
+    # save total word count before removing common words
+    wordsused = len(counts)
+
+    # remove common words from the dictionary (except "me," a Clinton fave)
+    shortwords = [word for word in counts if len(word) < 3 and word not in ['me']]
+    ignore = shortwords + \
+        ['after', 'all', 'and', 'are', 'because', 'been', 'but', 'for', 'from',
+         'has', 'have', 'her', 'more', 'not', 'now', 'our', 'than', 'that',
+         'the', 'these', 'they', 'their', 'this', 'was', 'were', 'when', 'who',
+         'will', 'with', 'year']
+    for word in ignore:
+        counts.pop(word, None)
+
+    # don't include 2-letter and 1-letter words
+    shortwords = [word for word in counts if len(word) < 3]
+
+    return (counts, wordsused)
+
 #------------------------------------------------------------------------------
 def getlinks(pageurl, pageresponse, domain):
     """Returns a list of links from from this page to be crawled.
@@ -139,7 +166,7 @@ def wordcount(pageresponse):
     """
     rawtext = bs4.BeautifulSoup(pageresponse.text, "html.parser").get_text()
     words = getwords(rawtext)
-    counts = collections.Counter(words)
+    counts, wordsused = getcounts(words)
     for word, count in counts.most_common(10):
         print(word, count)
 
