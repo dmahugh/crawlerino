@@ -70,8 +70,8 @@ def getcounts(words=None):
     # save total word count before removing common words
     wordsused = len(counts)
 
-    # remove common words from the dictionary (except "me," a Clinton fave)
-    shortwords = [word for word in counts if len(word) < 3 and word not in ['me']]
+    # remove common words from the dictionary
+    shortwords = [word for word in counts if len(word) < 3] # no words <3 chars
     ignore = shortwords + \
         ['after', 'all', 'and', 'are', 'because', 'been', 'but', 'for', 'from',
          'has', 'have', 'her', 'more', 'not', 'now', 'our', 'than', 'that',
@@ -79,9 +79,6 @@ def getcounts(words=None):
          'will', 'with', 'year']
     for word in ignore:
         counts.pop(word, None)
-
-    # don't include 2-letter and 1-letter words
-    shortwords = [word for word in counts if len(word) < 3]
 
     return (counts, wordsused)
 
