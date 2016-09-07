@@ -149,7 +149,7 @@ def pagehandler(pageurl, pageresponse, soup):
     Return value = whether or not this page's links should be crawled.
     """
     print('Crawling:' + pageurl + ' ({0} bytes)'.format(len(pageresponse.text)))
-    wordcount(pageresponse, soup) # display unique word counts
+    wordcount(soup) # display unique word counts
     return True
 
 #------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ def url_in_list(url, listobj):
     return (http_version in listobj) or (https_version in listobj)
 
 #------------------------------------------------------------------------------
-def wordcount(pageresponse, soup):
+def wordcount(soup):
     """Display word counts for a crawled page.
 
     pageresponse = page content; response object from requests module
@@ -204,6 +204,7 @@ def wordcount(pageresponse, soup):
     the page and displays the word counts.
     """
     rawtext = soup.get_text()
+    print(rawtext)
     words = getwords(rawtext)
     counts, _ = getcounts(words)
     if counts.most_common(1)[0][1] < 10:
@@ -215,6 +216,6 @@ def wordcount(pageresponse, soup):
 # if running standalone, crawl some Microsoft pages as a test
 if __name__ == "__main__":
     START = default_timer()
-    crawler('http://www.mahugh.com', maxpages=10, singledomain=True)
+    crawler('http://mahugh.com/2016/04/27/springtime-in-new-york/', maxpages=1, singledomain=True)
     END = default_timer()
     print('Elapsed time (seconds) = ' + str(END-START))
